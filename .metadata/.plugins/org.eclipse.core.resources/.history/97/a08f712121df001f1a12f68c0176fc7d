@@ -1,0 +1,38 @@
+/*
+ * Enrollment.h
+ *
+ *  Created on: 17 Jan 2025
+ *      Author: Asus
+ */
+
+#ifndef ENROLLMENT_H_
+#define ENROLLMENT_H_
+#include <string>
+#include "Course.h"
+
+class Enrollment {
+private:
+    float grade;             // Declare in the same order you intend to initialize
+    std::string semester;
+    const Course* course;
+
+public:
+    // Constructor Implementation
+    Enrollment(std::string semester, const Course* course);
+    Enrollment(std::string semester, float grade, const Course* course);
+
+    const std::string& getSemester() const;
+	const Course* getCourse() const;
+	Course* getCourse();
+	float getGrade() const;
+
+	//Setter Declaration
+	void setGrade(float grade);
+
+	//method definition to read from the file
+	void read(std::istream &in);
+
+};
+
+#endif // ENROLLMENT_H_
+

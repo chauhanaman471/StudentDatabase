@@ -1,0 +1,116 @@
+/**
+ * @file StudentDb.h
+ * @brief Stores student and course information in a database-like structure.
+ * @author Aman Chauhan
+ * @date 17 January 2025
+ * @version 1.0
+ * @note Master Student at HDA
+ * @matriculationNumber 1127928
+ */
+
+#ifndef STUDENTDB_H_
+#define STUDENTDB_H_
+
+#include <map>
+#include <memory>
+#include <string>
+#include <Poco/Data/Date.h>
+#include <Poco/Data/Time.h>
+#include "Student.h"
+#include "Course.h"
+#include "BlockCourse.h"
+#include "WeeklyCourse.h"
+
+/**
+ * @class StudentDb
+ * @brief Manages the storage and operations for students and courses.
+ */
+class StudentDb {
+private:
+	/**< Stores students indexed by matriculation number */
+    std::map<int, Student> students;
+    /**< Stores courses indexed by course key */
+    std::map<int, std::unique_ptr<const Course>> courses;
+
+public:
+    /**
+     * @brief Default constructor.
+     */
+    StudentDb();
+
+    /**
+     * @brief Destructor.
+     */
+    ~StudentDb();
+
+    /**
+     * @brief Adds a new course to the database.
+     * @param courseKey Unique identifier for the course.
+     * @param title Title of the course.
+     * @param major Major category for the course.
+     * @param creditPoints Credit points associated with the course.
+     */
+    void addCourse(unsigned int courseKey, std::string title,
+    		unsigned char major,float creditPoints);
+
+    /**
+     * @brief Lists all available courses in the database.
+     */
+    void listCourse();
+
+    /**
+     * @brief Adds a new student to the database.
+     * @param firstName First name of the student.
+     * @param lastName Last name of the student.
+     * @param dob Date of birth of the student.
+     * @param street Street address of the student.
+     * @param postalCode Postal code of the student's address.
+     * @param cityName City name of the student's address.
+     * @param additionalInfo Additional information about the student.
+     */
+    void addNewStudent(std::string firstName, std::string lastName,
+                       Poco::Data::Date dob, std::string street,
+                       unsigned short postalCode, std::string cityName,
+                       std::string additionalInfo);
+
+    /**
+     * @brief Enrolls a student in a course.
+     * @param matrikelNumber Matriculation number of the student.
+     * @param courseKey Key of the course.
+     * @param semester Semester of enrollment.
+     */
+    void addEnrollment(int matrikelNumber, int courseKey, std::string semester);
+
+    /**
+     * @brief Prints information of a student by matriculation number.
+     * @param matrikelNumber Matriculation number of the student.
+     */
+    void printStudent(int matrikelNumber);
+
+    /**
+     * @brief Searches for students by substring in their names.
+     * @param subString Substring to search for in student names.
+     */
+    void searchStudent(std::string subString);
+
+    /**
+     * @brief Updates student information by matriculation number.
+     * @param matrikelNumber Matriculation number of the student.
+     */
+    void updateStudent(int matrikelNumber);
+
+    /**
+     * @brief Writes the current database to an output stream.
+     * @param out Output stream to write to.
+     */
+    void write(std::ostream& out);
+
+    /**
+     * @brief Reads data from an input stream and updates the database.
+     *        Clears the current database before loading the new data.
+     * @param in Input stream to read from.
+     */
+    void read(std::istream& in);
+};
+
+#endif /* STUDENTDB_H_ */

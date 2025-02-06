@@ -1,0 +1,47 @@
+/**
+ * @file main.cpp
+ * @brief Main program to start the Student Database application.
+ *
+ * This program initializes the Student Database and the User Interface,
+ * and runs the SimpleUI to allow users to interact with the system.
+ *
+ * @author Aman Chauhan
+ * @date 2025-01-30
+ * @version 1.0
+ * @note Master Student at HDA, Matriculation Number: 1127928
+ */
+
+// Standard (system) header files
+#include <iostream>
+#include <cstdlib>
+// Add more standard header files as required
+using namespace std;
+// Add your project's header files here
+#include "SimpleUI.h"
+#include "StudentDb.h"
+
+/**
+ * @brief Entry point for the program.
+ *
+ * Initializes the Student Database and the Simple User Interface. It starts
+ * the application by running the user interface to interact with the system.
+ *
+ * @param none
+ * @return int Returns 0 on successful execution.
+ */
+int main() {
+    // Output message indicating the start of the StudentDB
+	cout << "StudentDB started." << endl << endl;
+
+	// Create an instance of the StudentDb class
+    StudentDb studentDb;
+
+    // Create an instance of SimpleUI, passing the studentDb instance
+    SimpleUI databaseUI(studentDb);
+
+    // Run the user interface
+    databaseUI.run();
+
+    // Return 0 to indicate successful execution
+    return 0;
+}

@@ -1,0 +1,14 @@
+/*
+ * Course.cpp
+ *
+ *  Created on: 17 Jan 2025
+ *      Author: Asus
+ */
+
+#include "Course.h"
+
+Course::Course() {
+	// TODO Auto-generated constructor stub
+
+}
+

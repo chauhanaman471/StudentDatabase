@@ -1,0 +1,90 @@
+/**
+ * @file BlockCourse.h
+ * @brief Header file for the BlockCourse class, which inherits from Course.
+ *
+ * This file declares the BlockCourse class, which represents a block course
+ * with specific start and end dates and times. The class provides methods to
+ * print course details, write to a file, and read from a file.
+ *
+ * @author Aman Chauhan
+ * @date 2025-01-30
+ * @version 1.0
+ * @note Master Student at HDA, Matriculation Number: 1127928
+ */
+
+#ifndef BLOCKCOURSE_H_
+#define BLOCKCOURSE_H_
+
+#include "Course.h"
+#include <Poco/Data/Time.h>
+#include <Poco/Data/Date.h>
+
+class BlockCourse : public Course {
+private:
+    Poco::Data::Date startDate;  /**< Start date of the course. */
+    Poco::Data::Date endDate;    /**< End date of the course. */
+    Poco::Data::Time startTime;  /**< Start time of the course. */
+    Poco::Data::Time endTime;    /**< End time of the course. */
+
+public:
+    /**
+     * @brief Constructor to initialize BlockCourse with course & time details.
+     *
+     * This constructor initializes both the base class `Course` and  derived
+     * class `BlockCourse` with the required course and time-related details.
+     *
+     * @param courseKey The unique key identifying the course.
+     * @param title The title of the course.
+     * @param major The major associated with the course.
+     * @param creditPoints The number of credit points for the course.
+     * @param startDate The start date of the block course.
+     * @param endDate The end date of the block course.
+     * @param startTime The start time of the block course.
+     * @param endTime The end time of the block course.
+     */
+    BlockCourse(unsigned int courseKey, std::string title, unsigned char major,
+                float creditPoints, Poco::Data::Date startDate,
+                Poco::Data::Date endDate, Poco::Data::Time startTime,
+                Poco::Data::Time endTime);
+
+    /**
+     * @brief Constructor to initialize BlockCourse with only the course key.
+     *
+     * This constructor initializes the course key and allows for other course
+     * details to be set later.
+     *
+     * @param courseKey The unique key identifying the course.
+     */
+    BlockCourse(unsigned int courseKey);
+
+    /**
+     * @brief Prints the details of the block course.
+     *
+     * This function outputs course details, including title, credit points,
+     * major, and time-related details like start date, end date, start time,
+     * and end time.
+     */
+    void print() const;
+
+    /**
+     * @brief Writes the course details to the specified output stream.
+     *
+     * This function writes the course details, including start and end dates
+     * and times, to the specified output stream.
+     *
+     * @param out The output stream to which course details will be written.
+     */
+    void write(std::ostream &out) const;
+
+    /**
+     * @brief Reads the course details from the specified input stream.
+     *
+     * This function reads the course details, including start and end dates
+     * and times, from the specified input stream.
+     *
+     * @param in The input stream from which the course details will be read.
+     */
+    void read(std::istream &in);
+};
+
+#endif /* BLOCKCOURSE_H_ */

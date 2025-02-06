@@ -1,0 +1,25 @@
+// Standard (system) header files
+#include <iostream>
+#include <cstdlib>
+// Add more standard header files as required
+#include <fstream>
+using namespace std;
+// Add your project's header files here
+#include "SimpleUI.h"
+#include "StudentDb.h"
+
+// Main program
+int main (){
+    // TODO: Add your program code here
+	cout << "StudentDB started." << endl << endl;
+
+	StudentDb studentDb;
+	SimpleUI databaseUI(studentDb);
+	databaseUI.run();
+
+/*	ofstream file("output.txt");	//create a file stream for writing
+	studentDb.write(file);
+	file.close();*/
+
+	return 0;
+}

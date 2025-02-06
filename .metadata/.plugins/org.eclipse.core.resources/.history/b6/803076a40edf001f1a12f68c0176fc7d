@@ -1,0 +1,203 @@
+/*
+ * SimpleUI.cpp
+ *
+ *  Created on: 17 Jan 2025
+ *      Author: Asus
+ */
+
+#include "SimpleUI.h"
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <Poco/Data/Date.h>
+#include <Poco/Data/Time.h>
+using namespace std;
+
+
+//Constructor Implementation
+SimpleUI::SimpleUI(StudentDb &db): db{db} {
+}
+
+void SimpleUI::run() {
+	int dbChoice = -1;
+	while(dbChoice!=0){
+		cout <<"1 : Adding new course"<<endl;
+		cout <<"2 : Printing all courses"<<endl;
+		cout <<"3 : Adding new student"<<endl;
+		cout <<"4 : Adding new enrollment"<<endl;
+		cout <<"5 : Print student and their enrolled courses and its results"<<endl;
+		cout <<"6 : Search student"<<endl;
+		cout <<"7 : Update Student"<<endl;
+		cout <<"8 : Write to CSV File"<<endl;
+		cout <<"9 : Read from CSV File"<<endl;
+		cout <<"0 : To exit"<<endl;
+
+        // Handle invalid input
+        if (cin.fail()) {
+            cin.clear(); // Clear the error flag
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore the rest of the invalid input
+            cout << "Invalid input. Please enter a number between 0 and 9." << endl;
+            continue; // Restart the loop
+        }
+
+		cout <<"Enter the choice for the database: "<<endl;
+		dbChoice = 9;		//getting choice from the user
+		switch(dbChoice){
+		case 1: {
+			cout<<"User have choose to add a new course"<<endl;
+			cout <<"Course Key:"<<endl;
+			unsigned int courseKey;
+			cin >>courseKey;
+
+			cout<<"Course Title:"<<endl;
+			cin.ignore();
+			string title;
+			getline(cin,title);
+
+			cout<<"Course Major (A: Automation, E: Embedded, "
+					"C: Communication, P: Power): "<<endl;
+			unsigned char major;
+			cin >> major;
+
+			cout<<"Course CP: "<<endl;
+			float creditPoints;
+			cin >> creditPoints;
+			db.addCourse(courseKey,title,major,creditPoints);
+			break;
+		}
+		case 2: {
+			cout<<"User have choose to print all courses"<<endl;
+			db.listCourse(); break;
+		}
+		case 3: {
+			cout<<"User have choose to add a new Student"<<endl;
+
+			cout<<"Student First Name:"<<endl;
+			cin.ignore(); // Clear the leftover newline from previous input
+			string firstName;
+			getline(cin,firstName);
+			//cin>>firstName;
+
+			cout<<"Student Last Name:"<<endl;
+			string lastName;
+			getline(cin,lastName);
+			//cin>>lastName;
+
+			cout<<"Student DOB (Year):"<<endl;
+			int dobYear;
+			cin>>dobYear;
+			cout<<"Student DOB (Month):"<<endl;
+			int dobMonth;
+			cin>>dobMonth;
+			cout<<"Student DOB (Date):"<<endl;
+			int dobDate;
+			cin>>dobDate;
+			Poco::Data::Date dob(dobYear,dobMonth,dobDate);
+
+			cout<<"Address: Street Name:"<<endl;
+			cin.ignore();
+			string streetName;
+			getline(cin,streetName);
+			//cin >>streetName;
+
+			cout<<"Address: City Name:"<<endl;
+			string cityName;
+			getline(cin,cityName);
+			//cin >>cityName;
+
+			cout<<"Address: Additional Information:"<<endl;
+			string additionalInfo;
+			getline(cin,additionalInfo);
+			//cin >>additionalInfo;
+
+			cout<<"Address: Postal Code:"<<endl;
+			unsigned short postalCode;
+			cin >>postalCode;
+
+			db.addNewStudent(firstName,lastName,dob,streetName,postalCode,
+					cityName,additionalInfo);
+			break;
+		}
+		case 4: {
+			cout<<"User have choose to add a new Enrollment"<<endl;
+			cout<<"Please enter student Matrikel Number:"<<endl;
+			int matrikelNumber;
+			cin >>matrikelNumber;
+
+			cout<<"Please enter course key:"<<endl;
+			int courseKey;
+			cin >>courseKey;
+
+			cout<<"Please enter semester:"<<endl;
+			cin.ignore();
+			string semester;
+			getline(cin,semester);
+			db.addEnrollment(matrikelNumber,courseKey,semester);
+			break;
+		}
+		case 5: {
+			cout<<"User have choose to print student and their enrolled course "
+					"and its result"<<endl;
+			cout<<"Student Matrikel Number:"<<endl;
+			int matrikelNumber;
+			cin >>matrikelNumber;
+			db.printStudent(matrikelNumber); break;
+		}
+		case 6: {
+			cout<<"User have choose to search student"<<endl;
+			cout<<"Please enter a string/substring from student First Name or Last Name:"<<endl;
+			string subString;
+			cin >> subString;
+			db.searchStudent(subString); break;
+		}
+		case 7: {
+			cout<<"User have choose to update student details"<<endl;
+			cout<<"Please enter student Matrikel Number:"<<endl;
+			int matrikelNumber;
+			cin >> matrikelNumber;
+			db.updateStudent(matrikelNumber); break;
+		}
+		case 8: {
+			//writing to csv file
+			//Query file name from user
+			cout<<"User enter the file Name to write(.csv extension)"<<endl;
+			string fileName = "Output.csv";
+			//cin >> fileName;
+			//open the file
+			std::ofstream file(fileName);
+			if (!file) {
+			    cout << "Error: Could not open file for writing"<<endl;
+			    return;
+			}
+			//call the studentDB method to write to the file
+			db.write(file);
+			//close the file
+			file.close();
+			break;
+		}
+		case 9:{
+			//Reading from csv file
+			//Query file name from user to read
+			cout<<"User enter the file Name to read(.csv extension)"<<endl;
+			string fileName;
+			cin >> fileName;
+			//open the file
+			std::ifstream file(fileName);
+			if (!file) {
+			    cout << "Error: Could not open file for reading"<<endl;
+			    return;
+			}
+			//call the studentDB method to read the file
+			db.read(file);
+			//close the file
+			file.close();
+			break;
+		}
+		case 0: {
+			cout<<"Exiting the Program"<<endl;break;
+		}
+		default: cout<<"Invalid Choice by the user"<<endl; break;
+		}
+	}
+
+}

@@ -1,0 +1,14 @@
+/*
+ * WeeklyCourse.cpp
+ *
+ *  Created on: 17 Jan 2025
+ *      Author: Asus
+ */
+
+#include "WeeklyCourse.h"
+
+WeeklyCourse::WeeklyCourse() {
+	// TODO Auto-generated constructor stub
+
+}
+

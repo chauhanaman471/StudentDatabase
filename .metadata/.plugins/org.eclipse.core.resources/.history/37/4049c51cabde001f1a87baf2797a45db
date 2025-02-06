@@ -1,0 +1,103 @@
+/*
+ * Course.cpp
+ *
+ *  Created on: 17 Jan 2025
+ *      Author: Asus
+ */
+
+#include "Course.h"
+#include <iostream>
+using namespace std;
+
+//Constructor Implementation
+Course::Course(unsigned int courseKey, std::string title, unsigned char major,
+		float creditPoints):
+		majorById{
+		{'E',"Embedded"},
+		{'A',"Automation"},
+		{'P',"Power"},
+		{'C',"Communication"}},
+		courseKey{courseKey},title{title},
+		major{major},creditPoints{creditPoints}{
+}
+
+//Destructor Implementation
+Course::~Course() {
+}
+
+//Getter function Implementation
+unsigned int Course::getCourseKey() const {
+	return courseKey;
+}
+
+float Course::getCreditPoints() const {
+	return creditPoints;
+}
+
+unsigned char Course::getMajor() const {
+	return major;
+}
+
+const std::map<unsigned char, std::string>& Course::getMajorById() const {
+	return majorById;
+}
+
+const std::string& Course::getTitle() const {
+	return title;
+}
+
+//Method Implementation
+void Course::print()const {
+	//temporarily print the course detail
+	cout <<"Course Key: "<<courseKey<<endl;
+	cout <<"Course Title: "<<title<<endl;
+	auto majorSearch = majorById.find(major);
+	if(majorSearch !=majorById.end()){
+		cout <<"Major: "<<majorSearch->second<<endl;
+	}else{
+		cout <<"Invalid Major ID entered by user"<<endl;
+	}
+	cout <<"Course CP: "<<creditPoints<<endl;
+
+}
+
+//Method Implementation to write course details in a file
+void Course::write(std::ostream &out)const {
+	string majorString;
+	switch(major){
+	case 'A': majorString = "Automation"; break;
+	case 'E': majorString = "Embedded"; break;
+	case 'P': majorString = "Power"; break;
+	case 'C': majorString = "Communication"; break;
+	default : majorString = "Invalid"; break;
+	}
+	out <<courseKey<<";"<<title<<";"<<majorString<<";"<<creditPoints;
+}
+
+//Method Implementation to read course details from a file
+void Course::read(std::istream &in) {
+
+	getline(in,title,';');
+
+	string majorString;
+	getline(in,majorString,';');
+
+	cout<<"Major string:"<<majorString<<endl;
+
+	if(majorString == "Automation"){
+		major = 'A';
+	}else if(majorString == "Embedded"){
+		major = 'E';
+	}else if(majorString == "Power"){
+		major = 'P';
+	}else if(majorString == "Communication"){
+		major = 'C';
+	}else if(majorString == "Invalid"){
+		major = ' ';
+	}
+	cout<<"major: "<<major<<endl;
+
+	in >> creditPoints;
+	in.ignore();
+
+}

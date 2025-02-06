@@ -1,0 +1,141 @@
+/*
+ * Student.cpp
+ *
+ *  Created on: 17 Jan 2025
+ *      Author: Asus
+ */
+
+#include "Student.h"
+#include <iostream>
+using namespace std;
+
+
+//static variable with storage space defined = 100000
+unsigned int Student::nextMatrikelNumber = 100000;
+
+//default Constructor Implementation
+Student::Student():firstName{""},lastName{""},dateofBirth{0,0,0},
+		address{"",0,"",""} {
+			matrikelNumber = 0;
+}
+
+Student::Student(unsigned int matrikelNumber):matrikelNumber{matrikelNumber}{
+	nextMatrikelNumber=matrikelNumber+1;
+}
+
+//Constructor Implementation
+Student::Student(std::string firstName,
+		std::string lastName, Poco::Data::Date dateofBirth, Address address):
+			firstName{firstName},lastName{lastName},
+			dateofBirth{dateofBirth},address{address}{
+				//Since whenever you add new student,
+				//the db itself provides matrikelNumber and not from the user
+				matrikelNumber = nextMatrikelNumber++;
+}
+
+//Getter Implementation
+unsigned int Student::getMatrikelNumber() const {
+	return matrikelNumber;
+}
+
+const std::string& Student::getFirstName() const {
+	return firstName;
+}
+
+const std::string& Student::getLastName() const {
+	return lastName;
+}
+
+Address& Student::getAddress(){
+	return address;
+}
+
+const std::vector<Enrollment>& Student::getEnrollments()const{
+	return enrollments;
+}
+
+unsigned int Student::getNextMatrikelNumber(){
+	return nextMatrikelNumber;
+}
+
+//Setter Implementation
+void Student::setAddress(const Address &address) {
+	this->address = address;
+}
+
+void Student::setDateofBirth(const Poco::Data::Date &dateofBirth) {
+	this->dateofBirth = dateofBirth;
+}
+
+void Student::setFirstName(const std::string &firstName) {
+	this->firstName = firstName;
+}
+
+void Student::setLastName(const std::string &lastName) {
+	this->lastName = lastName;
+}
+
+void Student::setEnrollments(const std::vector<Enrollment> &enrollments) {
+	this->enrollments = enrollments;
+}
+
+std::vector<Enrollment>& Student::getEnrollments() {
+	return enrollments;
+}
+
+void Student::setNextMatrikelNumber(unsigned int nextMatrikelNumber) {
+	this->nextMatrikelNumber = nextMatrikelNumber;
+}
+
+std::ostream& operator <<(std::ostream &lhs, const Student &myStudent) {
+    lhs << "First Name: " << myStudent.firstName << endl;
+    lhs << "Last Name: " << myStudent.lastName << endl;
+    lhs << "Matrikel Number: " << myStudent.matrikelNumber << endl;
+    lhs << "DOB: " << myStudent.dateofBirth.day() << ":" << myStudent.dateofBirth.month()
+        << ":" << myStudent.dateofBirth.year() << endl;
+    lhs << "Address: " << myStudent.address << endl;
+    lhs << "Enrollments: " << endl;
+
+    //get the enrollment for the courses stored in vector
+    for(auto & enrollmentItr : myStudent.getEnrollments()){
+    	//each enrollment contains semester,grade and pointer to Course object
+    	//get the enrolled course
+    	const Course *coursePtr = enrollmentItr.getCourse();
+    	//print the course(Block/Weekly Course details)
+    	coursePtr->print();
+    	//get semester
+    	lhs<<"Semester: "<<enrollmentItr.getSemester()<<endl;
+    	//get grade
+    	lhs <<"Student Grade: "<<enrollmentItr.getGrade()<<endl;
+    }
+
+    return lhs;
+}
+
+//Method Implementation to write to the file
+void Student::write(std::ostream &out) {
+	out<<matrikelNumber<<";"<<lastName<<";"<<firstName<<";"
+	<<dateofBirth.day()<<"."<<dateofBirth.month()<<"."<<dateofBirth.year()
+	<<";"<<address.getStreet()<<";"<<address.getPostalCode()
+	<<";"<<address.getCityName()<<";"<<address.getAdditionalInfo();
+}
+
+//Method Implementation to read from the file
+void Student::read(std::istream &in) {
+	cout <<"User is reading student attributes"<<endl;
+
+	getline(in,lastName,';');	//Read the Last name
+	getline(in,firstName,';');	//Read the First name
+
+	int dobDay,dobMonth,dobYear;
+	in >> dobDay;
+	in.ignore();	//Ignore '.'
+	in >> dobMonth;
+	in.ignore();	//Ignore '.'
+	in >> dobYear;
+	in.ignore();	//Ignore ';'
+
+	dateofBirth = Poco::Data::Date(dobYear,dobMonth,dobDay); //Get the DOB
+
+	address.read(in);
+}

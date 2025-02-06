@@ -1,0 +1,22 @@
+/*
+ * Address.h
+ *
+ *  Created on: 17 Jan 2025
+ *      Author: Asus
+ */
+
+#ifndef ADDRESS_H_
+#define ADDRESS_H_
+#include <string>
+
+class Address {
+private:
+	std::string street;
+	unsigned short postalCode;
+	std::string cityName;
+	std::string additionalInfo;
+public:
+
+};
+
+#endif /* ADDRESS_H_ */

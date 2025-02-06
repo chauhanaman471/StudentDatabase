@@ -1,0 +1,68 @@
+/*
+ * Address.cpp
+ *
+ *  Created on: 17 Jan 2025
+ *      Author: Asus
+ */
+
+#include "Address.h"
+#include <iostream>
+using namespace std;
+
+//Constructor Implementation
+Address::Address(std::string street, unsigned short postalCode,
+		std::string cityName, std::string additionalInfo):
+			street{street},postalCode{postalCode},
+			cityName{cityName},additionalInfo{additionalInfo}{
+}
+
+//setter Implementation
+void Address::setAdditionalInfo(const std::string &additionalInfo) {
+	this->additionalInfo = additionalInfo;
+}
+
+void Address::setCityName(const std::string &cityName) {
+	this->cityName = cityName;
+}
+
+void Address::setPostalCode(unsigned short postalCode) {
+	this->postalCode = postalCode;
+}
+
+void Address::setStreet(const std::string &street) {
+	this->street = street;
+}
+
+//Getter Implementation
+const std::string& Address::getAdditionalInfo() const {
+	return additionalInfo;
+}
+
+const std::string& Address::getCityName() const {
+	return cityName;
+}
+
+unsigned short Address::getPostalCode() const {
+	return postalCode;
+}
+
+const std::string& Address::getStreet() const {
+	return street;
+}
+
+//<< operator overloaded for object belonging to Address class
+std::ostream& operator <<(std::ostream &lhs, const Address &myAddress) {
+	lhs <<" "<<myAddress.street<<", "<<myAddress.postalCode<<", "
+			<<myAddress.cityName<<", "<<myAddress.additionalInfo<<endl;
+	return lhs;
+}
+
+//Method Implementation to read from the file
+void Address::read(std::istream &in) {
+	getline(in,street,';');				//read Street Name
+	in >> postalCode;					//read Postal Code
+	in.ignore();
+	getline(in,cityName,';');			//read City Name
+	getline(in,additionalInfo);			//read additional Info
+	in.ignore();						//Ignore the newline '\n'
+}

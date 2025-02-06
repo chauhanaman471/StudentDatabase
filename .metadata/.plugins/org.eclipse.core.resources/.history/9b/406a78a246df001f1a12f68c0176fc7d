@@ -1,0 +1,104 @@
+/*
+ * WeeklyCourse.cpp
+ *
+ *  Created on: 17 Jan 2025
+ *      Author: Asus
+ */
+
+#include "WeeklyCourse.h"
+#include <iostream>
+#include <Poco/Data/Date.h>
+#include <Poco/Data/Time.h>
+using namespace std;
+
+//Constructor Implementation
+WeeklyCourse::WeeklyCourse(unsigned int courseKey, std::string title,
+		unsigned char major, float creditPoint,
+		Poco::DateTime::DaysOfWeek dayOfWeek, Poco::Data::Time startTime,
+		Poco::Data::Time endTime):
+		Course{courseKey,title,major,creditPoint},
+		dayOfWeek{dayOfWeek},
+		startTime{startTime},
+		endTime{endTime}{
+}
+
+WeeklyCourse::WeeklyCourse(unsigned int courseKey):Course{courseKey,"",' ',0}{
+
+}
+
+//display method implementation
+void WeeklyCourse::print()const {
+	//temporarily print the course detail
+	cout <<"Weekly Course"<<endl;
+	Course::print();
+	string weekDay;
+	switch(dayOfWeek){
+	case 0: weekDay = "SUNDAY"; break;
+	case 1: weekDay = "MONDAY"; break;
+	case 2: weekDay = "TUESDAY"; break;
+	case 3: weekDay = "WEDNESDAY"; break;
+	case 4: weekDay = "THURSDAY"; break;
+	case 5: weekDay = "FRIDAY"; break;
+	case 6: weekDay = "SATURDAY"; break;
+	default:weekDay = "INVALID INPUT BY USER"; break;
+	}
+	cout<<"Day of Week: "<<weekDay<<endl;
+	cout <<"Start Time: "<<startTime.hour()<< ":"
+			<<startTime.minute()<< ":"
+			<<startTime.second()<< endl;
+	cout <<"End Time: "<<endTime.hour()<< ":"
+			<<endTime.minute()<< ":"
+			<<endTime.second()<< endl;
+}
+
+//Method Implementation to write to the file & overwrite the virtual write method in course
+void WeeklyCourse::write(std::ostream &out)const {
+	out<<"W;";
+	Course::write(out);
+	out<<";"<<dayOfWeek<<";"<<startTime.hour()<<":"<<startTime.minute()
+			<<";"<<endTime.hour()<<":"<<endTime.minute();
+}
+
+//Method Implementation to read from the file & overwrite the virtual read method in course
+void WeeklyCourse::read(std::istream &in) {
+	Course::read(in); //read the course class attributes till CP
+
+	//read startDate
+	int weekDay;
+	in >> weekDay;
+	switch(weekDay){
+	case 0:dayOfWeek = Poco::DateTime::SUNDAY; break;
+	case 1:dayOfWeek = Poco::DateTime::MONDAY; break;
+	case 2:dayOfWeek = Poco::DateTime::TUESDAY; break;
+	case 3:dayOfWeek = Poco::DateTime::WEDNESDAY; break;
+	case 4:dayOfWeek = Poco::DateTime::THURSDAY; break;
+	case 5:dayOfWeek = Poco::DateTime::FRIDAY; break;
+	case 6:dayOfWeek = Poco::DateTime::SATURDAY; break;
+	}
+
+	in.ignore();	//Ignore the ;
+
+
+	int startTimeHour,startTimeMinute;
+	int endTimeHour,endTimeMinute;
+
+	//read startTime
+	in >>startTimeHour;
+	in.ignore();	//Ignore the :
+	in >>startTimeMinute;
+
+	startTime= Poco::Data::Time(startTimeHour,startTimeMinute,0);
+
+	in.ignore();	//Ignore the ;
+
+	//read endTime
+	in >>endTimeHour;
+	in.ignore();	//Ignore the :
+	in >>endTimeMinute;
+
+	endTime= Poco::Data::Time(endTimeHour,endTimeMinute,0);
+
+	in.ignore();	//Ignore the newline '\n'
+
+
+}

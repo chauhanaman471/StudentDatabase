@@ -1,0 +1,69 @@
+/*
+ * Student.h
+ *
+ *  Created on: 17 Jan 2025
+ *      Author: Asus
+ */
+
+#ifndef STUDENT_H_
+#define STUDENT_H_
+#include <string>
+#include <vector>
+#include <Poco/Data/Date.h>
+#include "Enrollment.h"
+#include "Address.h"
+
+class Student {
+private:
+	static unsigned int nextMatrikelNumber;
+	unsigned int matrikelNumber;
+	std::string firstName;
+	std::string lastName;
+	Poco::Data::Date dateofBirth;
+	std::vector<Enrollment> enrollments;
+	Address address;
+
+public:
+	//default constructor declaration
+	Student();
+	//constructor declaration
+	Student(std::string firstName,std::string lastName,
+			Poco::Data::Date dateofBirth, Address address);
+
+	//getter to retriever the Student member data
+	unsigned int getMatrikelNumber() const;
+	const std::string& getFirstName() const;
+	const std::string& getLastName() const;
+	static unsigned int getNextMatrikelNumber() const;
+
+	//get Enrollment objects stored in vector
+	const std::vector<Enrollment>& getEnrollments()const;
+
+	//get Enrollment objects stored in vector for modifying
+    std::vector<Enrollment>& getEnrollments();
+
+	//get Address object
+	Address& getAddress();
+
+	//setter to update the Student member data
+	void setAddress(const Address &address);
+	void setDateofBirth(const Poco::Data::Date &dateofBirth);
+	void setFirstName(const std::string &firstName);
+	void setLastName(const std::string &lastName);
+	void setEnrollments(const std::vector<Enrollment> &enrollments);
+	void setNextMatrikelNumber(static unsigned int nextMatrikelNumber);
+
+	friend std::ostream& operator<<(std::ostream& lhs, const Student& myStudent);
+
+	//write to the file and its relevant data
+	void write(std::ostream&out);
+
+	//read from the file and its relevant data
+	void read(std::istream&in);
+
+};
+
+//overloading << operator for object belonging to student class
+std::ostream& operator<<(std::ostream& lhs, const Student& myStudent);
+
+#endif /* STUDENT_H_ */

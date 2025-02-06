@@ -1,0 +1,21 @@
+// Standard (system) header files
+#include <iostream>
+#include <cstdlib>
+// Add more standard header files as required
+// #include <string>
+#include <Poco/Data/Date.h>
+
+using namespace std;
+
+// Add your project's header files here
+// #include "CFraction.h"
+
+// Main program
+int main (){
+    // TODO: Add your program code here
+	cout << "StudentDB started." << endl << endl;
+//	Poco::Data::Date d(2024, 2, 3);
+//	cout << d.year() << " " << d.month() << " " << d.day() << endl;
+
+	return 0;
+}

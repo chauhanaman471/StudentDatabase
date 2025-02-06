@@ -1,0 +1,43 @@
+/*
+ * Course.h
+ *
+ *  Created on: 17 Jan 2025
+ *      Author: Asus
+ */
+
+#ifndef COURSE_H_
+#define COURSE_H_
+#include <map>
+#include <string>
+
+class Course {
+protected:
+	std::map<unsigned char,std::string>majorById;
+	unsigned int courseKey;	//course should have a course key to access it
+	std::string title;	//course title
+	unsigned char major;
+	float creditPoints;	//course should have a credit points
+public:
+	// a course will definitely have a title/name, a key to access it,
+	// a credit points, the major the course is for
+	Course(unsigned int courseKey,std::string title,unsigned char major,
+			float creditPoints);
+	virtual ~Course();
+	unsigned int getCourseKey() const;
+	float getCreditPoints() const;
+	unsigned char getMajor() const;
+	const std::map<unsigned char, std::string>& getMajorById() const;
+	const std::string& getTitle() const;
+
+	//print down the course and its relevant data
+	virtual void print()const;
+
+	//write to the file and its relevant data
+	virtual void write(std::ostream& out)const;
+
+	//read from the file the relevant data
+	virtual void read(std::istream& in);
+	void setCourseKey(unsigned int courseKey);
+};
+
+#endif /* COURSE_H_ */

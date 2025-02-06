@@ -1,0 +1,46 @@
+/*
+ * Enrollment.cpp
+ *
+ *  Created on: 17 Jan 2025
+ *      Author: Asus
+ */
+
+#include "Enrollment.h"
+
+//constructor implementation for enrolling a student to a course
+Enrollment::Enrollment(std::string semester, const Course *course):
+semester{semester},course{course}{
+	grade = 0.0f;
+}
+
+//constructor implementation for updating the enrollment with grade
+Enrollment::Enrollment(std::string semester, float grade, const Course *course):
+	grade{grade}, semester{semester}, course{course}{
+}
+
+//Getter implementation
+const Course* Enrollment::getCourse() const {
+	return course;
+}
+
+float Enrollment::getGrade() const {
+	return grade;
+}
+
+const std::string& Enrollment::getSemester() const {
+	return semester;
+}
+
+//Setter Implementation
+void Enrollment::setGrade(float grade) {
+	this->grade = grade;
+}
+
+//Method Implementation to read from the file
+void Enrollment::read(std::istream &in) {
+	unsigned int courseKey;
+	in >> courseKey;
+	in.ignore();
+	course->setCourseKey(courseKey);
+
+}

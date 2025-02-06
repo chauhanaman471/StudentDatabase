@@ -1,0 +1,194 @@
+/*
+ * @file Course.cpp
+ * @brief Implementation file for Course class, representing a general course.
+ *
+ * This file contains the implementation of the Course class. It includes
+ * methods for setting and getting course details, printing course information,
+ * and reading/writing course data to/from a file.
+ *
+ * @author Aman Chauhan
+ * @date 2025-01-30
+ * @version 1.0
+ * @note Master Student at HDA, Matriculation Number: 1127928
+ */
+
+#include "Course.h"
+#include <iostream>
+using namespace std;
+
+// Constructor Implementation
+Course::Course(unsigned int courseKey, std::string title, unsigned char major,
+                float creditPoints) :
+    majorById{
+        {'E', "Embedded"},
+        {'A', "Automation"},
+        {'P', "Power"},
+        {'C', "Communication"}
+    },
+    courseKey{courseKey}, title{title},
+    major{major}, creditPoints{creditPoints} {
+}
+
+/**
+ * @brief Destructor for the Course class.
+ *
+ * The destructor for the Course class, which does not perform any specific
+ * cleanup as no dynamic memory allocation is done in the class.
+ */
+Course::~Course() {
+}
+
+/**
+ * @brief Retrieves the unique course key.
+ *
+ * This method returns the unique identifier for the course.
+ *
+ * @return The course key.
+ */
+unsigned int Course::getCourseKey() const {
+    return courseKey;
+}
+
+/**
+ * @brief Retrieves the credit points for the course.
+ *
+ * This method returns the number of credit points assigned to the course.
+ *
+ * @return The credit points of the course.
+ */
+float Course::getCreditPoints() const {
+    return creditPoints;
+}
+
+/**
+ * @brief Retrieves the major associated with the course.
+ *
+ * This method returns the major identifier associated with the course.
+ *
+ * @return The major identifier.
+ */
+unsigned char Course::getMajor() const {
+    return major;
+}
+
+/**
+ * @brief Retrieves the map of major IDs to names.
+ *
+ * This method returns the map that associates major IDs with their names.
+ *
+ * @return A reference to the map of major IDs and names.
+ */
+const std::map<unsigned char, std::string>& Course::getMajorById() const {
+    return majorById;
+}
+
+/**
+ * @brief Retrieves the title of the course.
+ *
+ * This method returns the title of the course.
+ *
+ * @return A reference to the course title.
+ */
+const std::string& Course::getTitle() const {
+    return title;
+}
+
+/**
+ * @brief Sets the course key.
+ *
+ * This method allows the course key to be modified.
+ *
+ * @param courseKey The new course key.
+ */
+void Course::setCourseKey(unsigned int courseKey) {
+    this->courseKey = courseKey;
+}
+
+/**
+ * @brief Prints the course details.
+ *
+ * This method prints out the details of course, including course key, title,
+ * major, and credit points.
+ */
+void Course::print() const {
+    cout << "Course Key: " << courseKey << endl;
+    cout << "Course Title: " << title << endl;
+
+    // Search for the major name using the major ID
+    auto majorSearch = majorById.find(major);
+    if (majorSearch != majorById.end()) {
+        cout << "Major: " << majorSearch->second << endl;
+    } else {
+        cout << "Invalid Major ID entered by user" << endl;
+    }
+
+    cout << "Course CP: " << creditPoints << endl;
+}
+
+/**
+ * @brief Writes the course details to the specified output stream.
+ *
+ * This method writes the course details, including course key, title, major,
+ * and credit points, to the given output stream in a formatted manner.
+ *
+ * @param out The output stream to write the course details to.
+ */
+void Course::write(std::ostream& out) const {
+    string majorString;
+
+    // Convert major character to string
+    switch (major) {
+    case 'A':
+        majorString = "Automation";
+        break;
+    case 'E':
+        majorString = "Embedded";
+        break;
+    case 'P':
+        majorString = "Power";
+        break;
+    case 'C':
+        majorString = "Communication";
+        break;
+    default:
+        majorString = "Invalid";
+        break;
+    }
+
+    // Write course details to stream
+    out << courseKey << ";" << title << ";" << majorString << ";"
+    		<< creditPoints;
+}
+
+/**
+ * @brief Reads the course details from the specified input stream.
+ *
+ * This method reads the course details, including course key, title, major,
+ * and credit points, from given input stream and updates course data members.
+ *
+ * @param in The input stream to read the course details from.
+ */
+void Course::read(std::istream& in) {
+    // Read course title from stream
+    getline(in, title, ';');
+
+    string majorString;
+    getline(in, majorString, ';');
+
+    // Set the major based on the string value read
+    if (majorString == "Automation") {
+        major = 'A';
+    } else if (majorString == "Embedded") {
+        major = 'E';
+    } else if (majorString == "Power") {
+        major = 'P';
+    } else if (majorString == "Communication") {
+        major = 'C';
+    } else if (majorString == "Invalid") {
+        major = ' ';
+    }
+
+    // Read credit points from stream
+    in >> creditPoints;
+    in.ignore();
+}

@@ -1,0 +1,41 @@
+/*
+ * BlockCourse.h
+ *
+ *  Created on: 17 Jan 2025
+ *      Author: Asus
+ */
+
+#ifndef BLOCKCOURSE_H_
+#define BLOCKCOURSE_H_
+#include "Course.h"
+#include <Poco/Data/Time.h>
+#include <Poco/Data/Date.h>
+
+class BlockCourse:public Course {
+private:
+	Poco::Data::Date startDate;
+	Poco::Data::Date endDate;
+	Poco::Data::Time startTime;
+	Poco::Data::Time endTime;
+public:
+	//Constructor Implementation of the derived class
+	//parameters title,courseKey,creditPoints,major belong to parent class "Course"
+	//parameters startDate, endDate, startTime, endTime belong to the derived class "BlockCourse"
+	BlockCourse(unsigned int courseKey,std::string title,unsigned char major,
+			float creditPoints,Poco::Data::Date startDate,
+			Poco::Data::Date endDate,Poco::Data::Time startTime,
+			Poco::Data::Time endTime);
+
+	//Constructor that takes only courseKey as parameter
+	BlockCourse(unsigned int courseKey);
+
+	//print down the course, its detail and including additional details like startDate, endDate, startTime, endTime
+	void print()const;
+
+	//write to the file the course details and including additional details like startDate, endDate, startTime, endTime
+	void write(std::ostream& out)const;
+	//read from the file the course details and including additional details like startDate, endDate, startTime, endTime
+	void read(std::istream& in);
+};
+
+#endif /* BLOCKCOURSE_H_ */

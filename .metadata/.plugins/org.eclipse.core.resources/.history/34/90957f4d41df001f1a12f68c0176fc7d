@@ -1,0 +1,48 @@
+/*
+ * Address.h
+ *
+ *  Created on: 17 Jan 2025
+ *      Author: Asus
+ */
+
+#ifndef ADDRESS_H_
+#define ADDRESS_H_
+#include <string>
+
+class Address {
+private:
+	std::string street;
+	unsigned short postalCode;
+	std::string cityName;
+	std::string additionalInfo;
+public:
+	//Constructor Declaration
+	Address(std::string street,
+			unsigned short postalCode,
+			std::string cityName,
+			std::string additionalInfo);
+	//Default constructor declaration
+	Address();
+
+	//Setter method declaration to update the member variables of Address class
+	void setAdditionalInfo(const std::string &additionalInfo);
+	void setCityName(const std::string &cityName);
+	void setPostalCode(unsigned short postalCode);
+	void setStreet(const std::string &street);
+
+	friend std::ostream& operator<<(std::ostream& lhs,const Address& myAddress);
+
+	//getter method declaration to received the member variables of Address class
+	const std::string& getAdditionalInfo() const;
+	const std::string& getCityName() const;
+	unsigned short getPostalCode() const;
+	const std::string& getStreet() const;
+
+	//read from the file and its relevant data
+	void read(std::istream&in);
+};
+
+//<< operator overloaded for object belonging to Address class
+std::ostream& operator<<(std::ostream& lhs,const Address& myAddress);
+
+#endif /* ADDRESS_H_ */

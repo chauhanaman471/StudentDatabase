@@ -1,0 +1,561 @@
+/*
+ * StudentDb.cpp
+ *
+ *  Created on: 17 Jan 2025
+ *      Author: Asus
+ */
+
+#include "StudentDb.h"
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <vector>
+#include <Poco/Data/Date.h>
+#include <Poco/Data/Time.h>
+using namespace std;
+
+//Constructor Implementation
+StudentDb::StudentDb() {
+
+}
+
+//Destructor Implementation
+StudentDb::~StudentDb() {
+}
+
+//Command Method Implementation
+//COMMAND 01:
+void StudentDb::addCourse(unsigned int courseKey, std::string title,
+		unsigned char major,float creditPoints) {
+	cout<<"Enter B or W to create a Block Course or Weekly Course "
+			"respectively"<<endl;
+	char courseType;
+	cin >>courseType;
+
+	switch(courseType){
+	case 'B':{
+		cout<<"You have choose to add a Block Course"<<endl;
+
+		//Get Block Course start Time
+		cout<<"Enter Block Course Start Time (hour)"<<endl;
+		int startTimeHour;
+		cin >>startTimeHour;
+		cout<<"Enter Block Course Start Time (minute)"<<endl;
+		int startTimeMinute;
+		cin >>startTimeMinute;
+		Poco::Data::Time myStartTime(startTimeHour,startTimeMinute,0);
+
+		//Get Block Course End Time
+		cout<<"Enter Block Course End Time (hour)"<<endl;
+		int endTimeHour;
+		cin >>endTimeHour;
+		cout<<"Enter Block Course End Time (minute)"<<endl;
+		int endTimeMinute;
+		cin >>endTimeMinute;
+		Poco::Data::Time myEndTime(endTimeHour,endTimeMinute,0);
+
+		//Get Block Course Start Date
+		cout <<"Enter Block Course Start(year)"<<endl;
+		int startYear;
+		cin >> startYear;
+		cout <<"Enter Block Course Start(month)"<<endl;
+		int startMonth;
+		cin >> startMonth;
+		cout <<"Enter Block Course Start(date)"<<endl;
+		int startDate;
+		cin >> startDate;
+		Poco::Data::Date myStartDate(startYear,startMonth,startDate);
+
+		//Get Block Course End Date
+		cout <<"Enter Block Course End(year)"<<endl;
+		int endYear;
+		cin >> endYear;
+		cout <<"Enter Block Course End(month)"<<endl;
+		int endMonth;
+		cin >> endMonth;
+		cout <<"Enter Block Course End(date)"<<endl;
+		int endDate;
+		cin >> endDate;
+		Poco::Data::Date myEndDate(endYear,endMonth,endDate);
+
+		//Create object of Class: BlockCourse using Unique Ptr
+		auto blockCoursePtr = make_unique<BlockCourse>(courseKey,title,major,
+				creditPoints,myStartDate,myEndDate,myStartTime,myEndTime);
+
+		//Store the object created in map : courses using "move"
+		courses[courseKey] = std::move(blockCoursePtr);
+		break;
+	}
+	case 'W':{
+		cout<<"You have choose to add a Weekly Course"<<endl;
+
+		//Get Weekly Course start Time
+		cout<<"Enter Weekly Course Start Time (hour)"<<endl;
+		int startTimeHour;
+		cin >>startTimeHour;
+		cout<<"Enter Weekly Course Start Time (minute)"<<endl;
+		int startTimeMinute;
+		cin >>startTimeMinute;
+		Poco::Data::Time myStartTime(startTimeHour,startTimeMinute,0);
+
+		//Get Weekly Course End Time
+		cout<<"Enter Weekly Course End Time (hour)"<<endl;
+		int endTimeHour;
+		cin >>endTimeHour;
+		cout<<"Enter Weekly Course End Time (minute)"<<endl;
+		int endTimeMinute;
+		cin >>endTimeMinute;
+		Poco::Data::Time myEndTime(endTimeHour,endTimeMinute,0);
+
+		//Get Weekly Course Day of Week
+		cout <<"Enter Day of Week(0: Sunday to 6: Saturday)"<<endl;
+		int weekDay;
+		cin >> weekDay;
+
+	    // Create the WeeklyCourse object with the corresponding day using a switch-case
+	    Poco::DateTime::DaysOfWeek dayOfWeek;
+	    switch (weekDay) {
+	        case 0: dayOfWeek = Poco::DateTime::SUNDAY; break;
+	        case 1: dayOfWeek = Poco::DateTime::MONDAY; break;
+	        case 2: dayOfWeek = Poco::DateTime::TUESDAY; break;
+	        case 3: dayOfWeek = Poco::DateTime::WEDNESDAY; break;
+	        case 4: dayOfWeek = Poco::DateTime::THURSDAY; break;
+	        case 5: dayOfWeek = Poco::DateTime::FRIDAY; break;
+	        case 6: dayOfWeek = Poco::DateTime::SATURDAY; break;
+	        default:
+	            cout << "Invalid input by the user" << endl;
+	            return; // Exit if invalid input
+	    }
+
+	    //Create object of Class: WeeklyCourse using Unique Ptr
+	    std::unique_ptr<WeeklyCourse>weeklyCoursePtr =
+	    		make_unique<WeeklyCourse>(courseKey,title,major,
+				creditPoints,dayOfWeek,myStartTime,myEndTime);
+	    //Store the object created in map : courses using "move"
+	    courses[courseKey] = std::move(weeklyCoursePtr);
+	    break;
+	}
+	default: cout<<"Invalid choice by the user"<<endl; break;
+	}
+}
+
+//COMMAND 02:
+void StudentDb::listCourse() {
+	for(auto const&pair: courses){
+		pair.second->print();
+		cout<<endl;
+	}
+}
+
+//COMMAND 03:
+void StudentDb::addNewStudent(std::string firstName, std::string lastName,
+		Poco::Data::Date dob, std::string street,
+		  unsigned short postalCode,
+		  std::string cityName,
+		  std::string additionalInfo){
+
+	//create an object of student address
+	Address myStudentAddress{street,postalCode,cityName,additionalInfo};
+	//create an object of Student
+	Student myStudent{firstName,lastName,dob,myStudentAddress};
+	//extract the matriculation Number of the student
+	int MatrikelNumber = myStudent.getMatrikelNumber();
+	//insert the Student class object by key = matrikelNumber in map students
+	students.insert({MatrikelNumber,myStudent});
+
+	//check if storing was successful or not
+	if(students.empty()!=true){
+		cout <<"Student detail added in DB Successfully"<<endl;
+		cout <<"Generated MatrikelNumber: "<<MatrikelNumber<<endl;
+
+	}else{
+		cout <<"FAILURE: Student detail not added in DB"<<endl;
+	}
+
+}
+
+//COMMAND 04:
+void StudentDb::addEnrollment(int matrikelNumber, int courseKey,
+		string semester){
+	//check if student exist in db or not
+	if(students.find(matrikelNumber)==students.end()){
+		cout<<"Student with matrikelNumber: "<<matrikelNumber<<" doesn't exist"<<endl;
+		return;
+	}
+	//check if course exist in db or not
+	if(courses.find(courseKey)==courses.end()){
+		cout<<"Course with Key: "<<courseKey<<" doesn't exist"<<endl;
+		return;
+	}
+	//both student and course exist in db
+
+	//get reference to the associated student object stored in map using matrikelNumber
+	Student& myStudent = students[matrikelNumber];
+	//get reference to the associated course stored in map using courseKey
+	auto& myCourseUniquePtr = courses[courseKey];
+	//Convert uniquePtr to raw Ptr of Class Course
+	const Course* myCoursePtr = myCourseUniquePtr.get();
+
+
+	//check if enrollment to current course exist in enrollment vector or not
+	for(auto const&studentEnrollment : myStudent.getEnrollments()){
+		//check if course and semester matches or not
+		if(studentEnrollment.getSemester() == semester &&
+				studentEnrollment.getCourse()){
+			cout <<"Enrollment to Course with key:"<<courseKey<<" exist"<<endl;
+			return;
+		}
+	}
+
+	//enrollment doesn't exist
+	//create enrollment for the course
+	Enrollment myEnrollment{semester,myCoursePtr};
+
+	auto temporaryEnrollment = myStudent.getEnrollments();
+	temporaryEnrollment.push_back(myEnrollment);
+	myStudent.setEnrollments(temporaryEnrollment);
+	cout<<"Course with Key : "<<courseKey<<" was enrolled for student with "
+			"matrikel Number : "<<matrikelNumber<<endl;
+}
+
+//COMMAND 05:
+void StudentDb::printStudent(int matrikelNumber) {
+	cout<<"Student details:"<<endl;
+	cout<<""<<students[matrikelNumber]<<endl;
+}
+
+//COMMAND 06:
+void StudentDb::searchStudent(std::string subString) {
+	bool isFound = false;
+	//iterate over map to first find the student object stored in DB
+	for(auto const&pair : students){
+		//Get the MatrikelNumber and Student object
+		//int studentMatrikelNumber = pair.first;
+		const Student &myStudent = pair.second;
+		if (myStudent.getFirstName().find(subString) != string::npos ||
+			myStudent.getLastName().find(subString) != string::npos){
+			if(isFound==false){
+				// If it's the first match, print the "found" message
+				cout <<"Student Details are Found"<<endl;
+				// Reset flag to true to avoid printing the message again
+				// for subsequent matches
+				isFound = true;
+			}
+			//Print matched students details:
+			cout <<"Student details:"<<endl;
+			cout <<""<<myStudent<<endl;
+		}
+	}
+	if(isFound==false){
+		cout <<"Student details are not found"<<endl;
+	}
+}
+
+//COMMAND 07:
+void StudentDb::updateStudent(int matrikelNumber) {
+	//iterate over map to first find the student Matrikel Number and its object stored in DB
+	for(auto & pair : students){
+		//here const pair is not used since we want to update the objects stored in map directly
+		int studentMatrikelNumber = pair.first;
+		Student &myStudent = pair.second;
+		Address &myStudentAddress = myStudent.getAddress();
+		if (studentMatrikelNumber == matrikelNumber){
+			cout <<"Student with Matrikel Number: "<<matrikelNumber<<" exist"<<endl;
+			int updateChoice = 10;		//Random Value stored
+			while(updateChoice !=0){
+				cout <<"Choices to update: "<<endl;
+				cout <<"1 : Update Student First Name"<<endl;
+				cout <<"2 : Update Student Last Name"<<endl;
+				cout <<"3 : Update Student DOB"<<endl;
+				cout <<"4 : Update Student Address: Street"<<endl;
+				cout <<"5 : Update Student Address: Postal Code"<<endl;
+				cout <<"6 : Update Student Address: City Name"<<endl;
+				cout <<"7 : Update Student Address: Additional Info"<<endl;
+				cout <<"8 : Update Enrollment"<<endl;
+				cout <<"0 : Terminate Update Process"<<endl<<endl;
+				cout <<"Please enter a choice from above List"<<endl;
+				cin >> updateChoice;
+
+                // Handle invalid input
+                if (cin.fail()) {
+                    cin.clear(); // Clear the error flag
+                    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore the rest of the invalid input
+                    cout << "Invalid input. Please enter a number between 0 and 8." << endl;
+                    continue; // Restart the loop
+                }
+
+				switch(updateChoice){
+				case 1:{
+					cout <<"Enter the updated Student First Name"<<endl;
+					cin.ignore();
+					string updatedFirstName;
+					getline(cin,updatedFirstName);
+					//cin >> updatedFirstName;
+					myStudent.setFirstName(updatedFirstName);
+					break;
+				}
+				case 2:{
+					cout <<"Enter the updated Student Last Name"<<endl;
+					cin.ignore();
+					string updatedLastName;
+					getline(cin,updatedLastName);
+					//cin >> updatedLastName;
+					myStudent.setLastName(updatedLastName);
+					break;
+				}
+				case 3:{
+					cout <<"Enter the updated Student DOB: Year"<<endl;
+					int updatedYear;
+					cin >>updatedYear;
+
+					cout <<"Enter the updated Student DOB: Month"<<endl;
+					int updatedMonth;
+					cin >>updatedMonth;
+
+					cout <<"Enter the updated Student DOB: Date"<<endl;
+					int updatedDate;
+					cin >>updatedDate;
+
+					Poco::Data::Date updateDOB(updatedYear,updatedMonth,updatedDate);
+
+					myStudent.setDateofBirth(updateDOB);
+					break;
+				}
+				case 4:{
+					cout <<"Enter the updated Student Address: Street Name"<<endl;
+					cin.ignore();
+					string updatedStreetName;
+					getline(cin,updatedStreetName);
+					//cin >> updatedStreetName;
+					myStudentAddress.setStreet(updatedStreetName);
+					break;
+				}
+				case 5:{
+					cout <<"Enter the updated Student Address: Postal Code"<<endl;
+					unsigned short updatedPostalCode;
+					cin >> updatedPostalCode;
+					myStudentAddress.setPostalCode(updatedPostalCode);
+					break;
+				}
+				case 6:{
+					cout <<"Enter the updated Student Address: City Name"<<endl;
+					cin.ignore();
+					string updatedCityName;
+					getline(cin,updatedCityName);
+					//cin >> updatedCityName;
+					myStudentAddress.setCityName(updatedCityName);
+					break;
+				}
+				case 7:{
+					cout <<"Enter the updated Student Address: Additional Info"<<endl;
+					cin.ignore();
+					string updatedAddInfo;
+					getline(cin,updatedAddInfo);
+					//cin >> updatedAddInfo;
+					myStudentAddress.setAdditionalInfo(updatedAddInfo);
+					break;
+				}
+				case 8:{
+					cout<<"Enter the courseKey:"<<endl;
+					unsigned int courseKey;
+					cin >>courseKey;
+					cout <<"Enter the choice(1/2 : Delete enrollment/Update marks)"<<endl;
+					int enrollmentChoice;
+					cin >> enrollmentChoice;
+					//get reference to student enrollment vector
+					auto &studentEnrollment = myStudent.getEnrollments();
+					if(enrollmentChoice ==1){
+						cout<<"User decided to delete the enrollment of student"<<endl;
+						// Iterate into studentEnrollment vector to find the enrollment object
+						for(auto itr = studentEnrollment.begin();
+								itr != studentEnrollment.end(); itr++){
+							//check if enrolled course key matches or not
+							if(itr->getCourse()->getCourseKey() == courseKey){
+								studentEnrollment.erase(itr);
+								cout <<"Course with key"<<courseKey<<" is "
+										"successfully deleted"<<endl;
+								return;
+							}
+						}
+						cout <<"Course not found"<<endl;
+						return;
+					}else if(enrollmentChoice ==2){
+						cout << "User decided to update the marks of student" << endl;
+						    // Loop into studentEnrollment vector to find the enrollment object
+						    for (auto& enrollmentItr : studentEnrollment) {
+						        // Using enrollment object to find the course ptr and access the course Key
+						        // Check if course key matches
+						        if (enrollmentItr.getCourse()->getCourseKey() == courseKey) {
+						            cout << "Course found with courseKey: " << courseKey << endl;
+						            cout << "Enter Grade for the course: " << endl;
+						            float studentGrade;
+						            cin >> studentGrade;
+						            enrollmentItr.setGrade(studentGrade);  // Directly modifying the original object
+						            cout << "Grade updated successfully!" << endl;
+						            return;  // Exit once the update is done
+						        }
+						    }
+						    cout << "Course not found" << endl;
+						    return;
+					}else{
+						cout<<"Invalid choice for updating enrollment"<<endl;
+						return;
+					}
+					break;
+				}
+				default: cout<<"Invalid Choice made by user"<<endl; break;
+				}
+			}
+			cout <<"User have terminated the Program"<<endl;
+		}else{
+			cout <<"Student with Matrikel Number: "<<matrikelNumber<<" doesn't exist"<<endl;
+			return;
+		}
+	}
+}
+
+//Method implementation to write db data to file
+void StudentDb::write(std::ostream &out) {
+	//write the address details
+	out<<courses.size();
+	out<<"\n";
+	//for each item(course object) stored in courses map call the write function
+	for(auto&studentCourses : courses){
+		studentCourses.second->write(out);
+		out<<"\n";
+	}
+	//write the student details
+	out<<students.size();
+	out<<"\n";
+	//for each item(student object) stored in students map call the write function
+	for(auto&student : students){
+		student.second.write(out);
+		out<<"\n";
+	}
+	//write the enrollment of students
+	int numberOfEnrollments = 0;
+	for(auto&tempStudent : students){
+		numberOfEnrollments = numberOfEnrollments +
+				tempStudent.second.getEnrollments().size();
+	}
+	out<<numberOfEnrollments<<"\n";
+
+	for(auto&student : students){
+		for(auto&studentEnrollment : student.second.getEnrollments()){
+			out <<student.first<<";"
+				<<studentEnrollment.getCourse()->getCourseKey()<<";"
+				<<studentEnrollment.getSemester()<<";"
+				<<studentEnrollment.getGrade()<<"\n";
+		}
+	}
+}
+
+//Method Implementation to read db data from the file
+void StudentDb::read(std::istream &in) {
+	//first step: clear the db
+	//clearing enrollment
+	for(auto&studentDetails: students){
+		studentDetails.second.getEnrollments().clear();
+	}
+	//clearing student map
+	students.clear();
+	//clearing course map
+	courses.clear();
+
+	//read the number of courses entry from the file
+	int coursesNumber;
+	in >> coursesNumber;
+	in.ignore(); //ignore the next line (\n)
+
+	//loop in and read every attribute of the courses
+	for(int courseItr = 0; courseItr<coursesNumber; courseItr++){
+		char courseType;
+		in >> courseType;//Read courseType: Weekly or Block course
+		in.ignore(); 	//ignore the ;
+
+		unsigned int courseKey;
+		in >> courseKey;	//Read courseKey
+		in.ignore();	//ignore the ;
+
+		unique_ptr<Course>courseUniquePtr;	//creating a unique Ptr
+		//For block course
+		if(courseType == 'B'){
+			//create block course object dynamically using unique ptr
+			courseUniquePtr = make_unique<BlockCourse>(courseKey);
+		}else if(courseType == 'W'){
+			//create weekly course object dynamically using unique ptr
+			courseUniquePtr = make_unique<WeeklyCourse>(courseKey);
+		}
+
+		//check if the pointer is not a null pointer
+		if(courseUniquePtr!=nullptr){
+			//read the remaining attributes using the necessary read method
+			courseUniquePtr->read(in);
+			//transfer the ownership to the uniquePtr stored in the courses map
+			courses[courseKey]=move(courseUniquePtr);
+		}
+
+	}
+
+	//read the number of students entry from the file
+	int studentNumber;
+	in >>studentNumber;
+	in.ignore(); //Ignore the next line(\n)
+
+	int maxMatrikelNumber;
+
+	//loop in and read every attribute of the student
+	for(int studentItr=0; studentItr<studentNumber; studentItr++){
+		int matrikelNumber;
+		in >>matrikelNumber; //Read matrikel number of student
+		in.ignore();	//Ignore the ;
+
+		cout<<"Matrikel Number: "<<matrikelNumber<<endl;
+
+		string lastName;
+		getline(in,lastName,';');
+		cout <<"Last Name: "<<lastName<<endl;
+
+		string firstName;
+		getline(in,firstName,';');
+		cout <<"First Name: "<<firstName<<endl;
+
+		int dobDay,dobMonth,dobYear;
+		in >> dobDay;
+		in.ignore();	//Ignore '.'
+		in >> dobMonth;
+		in.ignore();	//Ignore '.'
+		in >> dobYear;
+		in.ignore();	//Ignore ';'
+
+		string streetName,city,additionalInfo;
+		unsigned short postalCode;
+		getline(in,streetName,';');	//Read the street Name
+		in>>postalCode;				//Read the postal code
+		in.ignore();
+		getline(in,city,';');		//Read the city Name
+		getline(in,additionalInfo,'\n');	//Read the additional Info
+
+		//Create address object
+		Address myAddress{streetName,postalCode,city,additionalInfo};
+		//Create student object
+		Student myStudent{firstName,lastName,
+			Poco::Data::Date(dobYear,dobMonth,dobDay),myAddress
+		};
+
+		//update the DB
+		students[matrikelNumber] = myStudent;
+		if(matrikelNumber>maxMatrikelNumber) {
+			maxMatrikelNumber = matrikelNumber;
+		}
+		//temporary student class object
+		Student tempStudent;
+		//set next MatrikelNumber to highest MatrikelNumber +1
+		tempStudent.setNextMatrikelNumber(maxMatrikelNumber +1);
+		cout <<"nextMatrikelNumber: "<<tempStudent.getNextMatrikelNumber()<<endl;
+	}
+
+
+
+
+}

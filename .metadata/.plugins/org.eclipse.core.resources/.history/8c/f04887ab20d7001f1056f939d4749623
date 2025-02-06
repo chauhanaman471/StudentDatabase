@@ -1,0 +1,27 @@
+/*
+ * Student.h
+ *
+ *  Created on: 17 Jan 2025
+ *      Author: Asus
+ */
+
+#ifndef STUDENT_H_
+#define STUDENT_H_
+#include <string>
+#include <vector>
+#include <Poco/Data/Date.h>
+#include "Enrollment.h"
+
+class Student {
+private:
+	unsigned int nextMatrikelNumber = 100000;
+	unsigned int matrikelNumber;
+	std::string firstName;
+	std::string lastName;
+	Poco::Data::Date dateofBirth;
+	std::vector<Enrollment> enrollments;
+public:
+
+};
+
+#endif /* STUDENT_H_ */

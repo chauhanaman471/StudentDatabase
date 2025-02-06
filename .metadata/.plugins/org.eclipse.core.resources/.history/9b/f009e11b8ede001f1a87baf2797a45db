@@ -1,0 +1,52 @@
+/*
+ * BlockCourse.cpp
+ *
+ *  Created on: 17 Jan 2025
+ *      Author: Asus
+ */
+
+#include "BlockCourse.h"
+#include <iostream>
+using namespace std;
+
+//Constructor Implementation
+BlockCourse::BlockCourse(unsigned int courseKey, std::string title,
+		unsigned char major, float creditPoints, Poco::Data::Date startDate,
+		Poco::Data::Date endDate, Poco::Data::Time startTime,
+		Poco::Data::Time endTime):
+		Course{courseKey,title,major,creditPoints},
+		startDate{startDate},
+		endDate{endDate},
+		startTime{startTime},
+		endTime{endTime}{
+}
+
+////Display method implementation
+void BlockCourse::print()const {
+	//temporarily print the course detail
+	cout <<"Block Course"<<endl;
+	Course::print();
+	cout <<"Start Date: "<<startDate.day()<<"."<<startDate.month()<<"."<<
+			startDate.year()<<endl;
+	cout <<"End Date: "<<endDate.day()<<"."<<endDate.month()<<"."<<
+			endDate.year()<<endl;
+	cout <<"Start Time: "<<startTime.hour()<< ":"
+		 <<startTime.minute()<< ":"
+		 <<startTime.second()<< endl;
+	cout <<"End Time: "<<endTime.hour()<< ":"
+		 <<endTime.minute()<< ":"
+		 <<endTime.second()<< endl;
+}
+
+//Method Implementation to write to the file & overwrite the virtual write method in course
+void BlockCourse::write(std::ostream &out)const {
+	out<<"B;";
+	Course::write(out);
+	out<<";"<<startDate.day()<<"."<<startDate.month()<<"."<<startDate.year()
+			<<";"<<endDate.day()<<"."<<endDate.month()<<"."<<endDate.year()
+			<<";"<<startTime.hour()<<":"<<startTime.minute()
+			<<";"<<endTime.hour()<<":"<<endTime.minute();
+}
+
+void BlockCourse::read(std::istream &in) {
+}
