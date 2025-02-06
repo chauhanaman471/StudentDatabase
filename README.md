@@ -1,7 +1,7 @@
 # Student Database Project
 
 ## Overview
-The Student Database (StudentDB) project is a simple student management system designed to store and manipulate student records, course information, and enrollments. It follows the Model-View-Controller (MVC) pattern and includes a basic command-line interface for user interaction.
+The Student Database (StudentDB) project is a simple student management system designed to store and manipulate student records, course information, and enrollments.
 
 ## Features
 ### 1. Course Management
